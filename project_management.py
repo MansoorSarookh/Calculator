@@ -6,7 +6,7 @@ from datetime import date
 PROJECT_DATA_FILE = 'projects.csv'
 st.title("Project Management Tool")
 # Developer's signature
-st.title("Project Management Tool by Mansoor Sarookh, CS Student at GPGC Swabi")
+st.title("Developed By Mansoor Sarookh, CS Student at GPGC Swabi")
 
 # Load project data
 def load_projects():
