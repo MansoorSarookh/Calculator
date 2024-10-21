@@ -1,5 +1,5 @@
 # Step 1: Install required packages
-!pip install streamlit pyngrok
+#!pip install streamlit pyngrok
 
 # Step 2: Write your Streamlit app to a Python file
 %%writefile app.py
