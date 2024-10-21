@@ -30,13 +30,23 @@ def add_project():
     
     if st.button("Create Project"):
         if name and description:
-            new_project = {"Project Name": name, "Description": description, "Start Date": start_date, "End Date": end_date, "Priority": priority, "Status": "Uncompleted"}
+            new_project = pd.DataFrame({
+                "Project Name": [name],
+                "Description": [description],
+                "Start Date": [start_date],
+                "End Date": [end_date],
+                "Priority": [priority],
+                "Status": ["Uncompleted"]
+            })
+            
             df = load_projects()
-            df = df.append(new_project, ignore_index=True)
+            # Update this part to use pd.concat instead of append
+            df = pd.concat([df, new_project], ignore_index=True)
             save_projects(df)
             st.success(f"Project '{name}' has been added!")
         else:
             st.error("Please fill in all fields")
+
 
 # View all projects
 def view_projects():
