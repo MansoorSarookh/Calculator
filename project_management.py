@@ -1,16 +1,10 @@
-# Step 1: Install required packages
-#!pip install streamlit pyngrok
-
-# Step 2: Write your Streamlit app to a Python file
-%%writefile app.py
-
 import streamlit as st
 import pandas as pd
 from datetime import date
 
 # Developer's signature
 st.title("Project Management Tool")
-st.subheader("Developed by Mansoor Sarookh, CS Student at GPGC Swabi")
+st.subheader("Developed by Mansoor Sarookh, CS Student")
 
 # Initialize project data
 if 'projects' not in st.session_state:
@@ -91,13 +85,3 @@ if st.session_state['projects']:
             display_project(project)
 else:
     st.sidebar.write("No projects available. Add a new project to get started.")
-
-# Step 3: Run the Streamlit app
-!streamlit run app.py &
-
-# Step 4: Use ngrok to expose the app to the web
-from pyngrok import ngrok
-
-# Create a public URL for the app
-public_url = ngrok.connect(port='8501')
-print(f"Streamlit app is live at {public_url}")
