@@ -2,86 +2,94 @@ import streamlit as st
 import pandas as pd
 from datetime import date
 
-# Developer's signature
+# File to store project data
+PROJECT_DATA_FILE = 'projects.csv'
 st.title("Project Management Tool")
-st.subheader("Developed by Mansoor Sarookh, CS Student")
+# Developer's signature
+st.title("Project Management Tool by Mansoor Sarookh, CS Student at GPGC Swabi")
 
-# Initialize project data
-if 'projects' not in st.session_state:
-    st.session_state['projects'] = []
+# Load project data
+def load_projects():
+    try:
+        return pd.read_csv(PROJECT_DATA_FILE)
+    except FileNotFoundError:
+        return pd.DataFrame(columns=["Project Name", "Description", "Start Date", "End Date", "Priority", "Status"])
 
-# Function to add a new project
+# Save project data
+def save_projects(df):
+    df.to_csv(PROJECT_DATA_FILE, index=False)
+
+# Add new project function
 def add_project():
-    with st.form("Add Project"):
-        project_name = st.text_input("Project Name")
-        project_description = st.text_area("Project Description")
-        start_date = st.date_input("Start Date", date.today())
-        end_date = st.date_input("End Date", date.today())
-        priority = st.selectbox("Priority", ['Low', 'Medium', 'High'])
-        submit_button = st.form_submit_button(label="Create Project")
-
-        if submit_button:
-            new_project = {
-                'name': project_name,
-                'description': project_description,
-                'start_date': start_date,
-                'end_date': end_date,
-                'priority': priority,
-                'tasks': []
-            }
-            st.session_state['projects'].append(new_project)
-            st.success(f"Project '{project_name}' created!")
-
-# Function to add tasks to a specific project
-def add_task(project):
-    with st.form(f"Add Task to {project['name']}"):
-        task_name = st.text_input("Task Name")
-        task_description = st.text_area("Task Description")
-        due_date = st.date_input("Due Date", date.today())
-        status = st.selectbox("Status", ['To-Do', 'In Progress', 'Completed'])
-        submit_button = st.form_submit_button(label="Add Task")
-
-        if submit_button:
-            new_task = {
-                'task_name': task_name,
-                'description': task_description,
-                'due_date': due_date,
-                'status': status
-            }
-            project['tasks'].append(new_task)
-            st.success(f"Task '{task_name}' added to project '{project['name']}'!")
-
-# Function to display project details and tasks
-def display_project(project):
-    st.write(f"**Project Name:** {project['name']}")
-    st.write(f"**Description:** {project['description']}")
-    st.write(f"**Start Date:** {project['start_date']}")
-    st.write(f"**End Date:** {project['end_date']}")
-    st.write(f"**Priority:** {project['priority']}")
+    st.header("Add New Project")
+    name = st.text_input("Project Name")
+    description = st.text_area("Project Description")
+    start_date = st.date_input("Start Date", date.today())
+    end_date = st.date_input("End Date")
+    priority = st.selectbox("Priority", ["Low", "Medium", "High"])
     
-    st.subheader("Tasks")
-    if project['tasks']:
-        for idx, task in enumerate(project['tasks']):
-            st.write(f"- **Task {idx+1}:** {task['task_name']}")
-            st.write(f"    - Description: {task['description']}")
-            st.write(f"    - Due Date: {task['due_date']}")
-            st.write(f"    - Status: {task['status']}")
+    if st.button("Create Project"):
+        if name and description:
+            new_project = {"Project Name": name, "Description": description, "Start Date": start_date, "End Date": end_date, "Priority": priority, "Status": "Uncompleted"}
+            df = load_projects()
+            df = df.append(new_project, ignore_index=True)
+            save_projects(df)
+            st.success(f"Project '{name}' has been added!")
+        else:
+            st.error("Please fill in all fields")
+
+# View all projects
+def view_projects():
+    st.header("Manage Your Projects")
+    df = load_projects()
+
+    if df.empty:
+        st.info("No projects available. Add a new project to get started.")
     else:
-        st.write("No tasks added yet.")
-    
-    add_task(project)
+        status_filter = st.selectbox("Filter by status", ["All", "Completed", "Uncompleted"])
+        if status_filter != "All":
+            df = df[df['Status'] == status_filter]
+        
+        for i, row in df.iterrows():
+            st.subheader(f"{row['Project Name']}")
+            st.text(f"Description: {row['Description']}")
+            st.text(f"Start Date: {row['Start Date']}")
+            st.text(f"End Date: {row['End Date']}")
+            st.text(f"Priority: {row['Priority']}")
+            st.text(f"Status: {row['Status']}")
+            if row['Status'] == "Uncompleted":
+                if st.button(f"Mark '{row['Project Name']}' as Completed", key=f"complete_{i}"):
+                    df.at[i, 'Status'] = "Completed"
+                    save_projects(df)
+                    st.success(f"'{row['Project Name']}' marked as Completed")
 
-# Sidebar for project navigation
-st.sidebar.title("Manage Your Projects")
+# View deadlines and high-priority projects
+def view_high_priority():
+    st.header("Upcoming Deadlines & High Priority Projects")
+    df = load_projects()
 
-# Add new project button
-if st.sidebar.button("Add New Project"):
+    if df.empty:
+        st.info("No projects available.")
+    else:
+        today = date.today()
+        upcoming_deadlines = df[df['End Date'] >= str(today)].sort_values('End Date')
+        high_priority = upcoming_deadlines[upcoming_deadlines['Priority'] == 'High']
+
+        if not high_priority.empty:
+            st.subheader("High Priority Projects")
+            for i, row in high_priority.iterrows():
+                st.text(f"{row['Project Name']} - Deadline: {row['End Date']}")
+
+        st.subheader("Upcoming Deadlines")
+        for i, row in upcoming_deadlines.iterrows():
+            st.text(f"{row['Project Name']} - Deadline: {row['End Date']}")
+
+# Streamlit sidebar menu
+menu = st.sidebar.selectbox("Menu", ["Add Project", "View Projects", "High Priority & Deadlines"])
+
+if menu == "Add Project":
     add_project()
-
-# List existing projects in the sidebar
-if st.session_state['projects']:
-    for project in st.session_state['projects']:
-        if st.sidebar.button(project['name'], key=project['name']):
-            display_project(project)
-else:
-    st.sidebar.write("No projects available. Add a new project to get started.")
+elif menu == "View Projects":
+    view_projects()
+elif menu == "High Priority & Deadlines":
+    view_high_priority()
