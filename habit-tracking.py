@@ -31,7 +31,7 @@ st.set_page_config(page_title="Habit Tracker", page_icon="📅", layout="wide")
 st.markdown("""
     <style>
         body {
-            background-color: #f0f4f8;
+            background-color: #6a1b9a;  /* Purple background color */
             font-family: 'Arial', sans-serif;
         }
         .stButton>button {
@@ -58,10 +58,10 @@ st.markdown("""
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .stSubheader {
-            color: #3b3b3b;
+            color: #ffffff; /* White color for subheaders to stand out on purple background */
         }
         .stTitle {
-            color: #4CAF50;
+            color: #ffffff; /* White color for title */
         }
     </style>
 """, unsafe_allow_html=True)
