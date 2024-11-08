@@ -31,7 +31,7 @@ st.set_page_config(page_title="Habit Tracker", page_icon="📅", layout="wide")
 st.markdown("""
     <style>
         body {
-            background-color: #6a1b9a;  /* Purple background color */
+            background-color: purple;  /* Purple background color */
             font-family: 'Arial', sans-serif;
         }
         .stButton>button {
