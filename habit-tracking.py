@@ -69,7 +69,7 @@ st.markdown("""
 # Streamlit app layout
 st.title("Habit Tracker 📅")
 st.write("Track your daily habits and monitor your progress. Stay consistent, stay productive!")
-st.write("**Created by Mansoor Sarookh**")
+st.write("**Created by Mansoor Ahmad, CS student**")
 
 # Input form for new habit
 st.subheader("Add a New Habit")
