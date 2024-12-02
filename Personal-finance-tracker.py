@@ -22,6 +22,7 @@ def calculate_balance():
 # Streamlit app layout
 st.title("Personal Finance Tracker")
 st.write("Track your income, expenses, and view your overall balance.")
+st.subheader("Developed By Mansoor Sarookh, CS Student")
 
 # Input form for transactions
 st.subheader("Add a New Transaction")
@@ -39,7 +40,7 @@ if st.button("Add Transaction"):
 # Display the balance
 st.subheader("Current Balance")
 balance = calculate_balance()
-st.metric("Balance", f"${balance:.2f}")
+st.metric("Balance", f"{balance:.2f}")
 
 # Show transactions history
 st.subheader("Transaction History")
